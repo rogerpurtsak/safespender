@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:safespender/features/navigation/presentation/main_shell_screen.dart';
+import 'package:safespender/shared/widgets/app_bottom_nav.dart';
 
 class SetupScreen extends StatelessWidget {
 	const SetupScreen({super.key});
@@ -12,10 +14,18 @@ class SetupScreen extends StatelessWidget {
 			),
 			body: Center(
 				child: ElevatedButton(
-					onPressed: () => context.go('/'),
-					child: const Text('Back to Home'),
+					onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const MainShellScreen(),
+              ),
+            );
+          },
+          child: const Text('j2tka'),
 				),
 			),
+      
 		);
 	}
 }
