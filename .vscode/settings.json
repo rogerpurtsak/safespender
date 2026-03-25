@@ -6,7 +6,7 @@
     "strings": false
   },
   "editor.suggestOnTriggerCharacters": false,
-  "editor.parameterHints.enabled": false,
+  "editor.parameterHints.enabled": true,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.acceptSuggestionOnCommitCharacter": false,
   "editor.suggest.showWords": false

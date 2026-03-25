@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safespender/app/router.dart';
+import 'package:safespender/app/theme/app_theme.dart';
 
-import '/router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -9,7 +9,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: AppTheme.lightTheme,
       routerConfig: appRouter,
+      debugShowCheckedModeBanner: false,
+      title: 'SafeSpender',
     );
   }
 }
