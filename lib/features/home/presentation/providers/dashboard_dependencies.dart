@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../expenses/data/datasources/expense_local_data_source.dart';
+import '../../../expenses/presentation/providers/add_expense_notifier.dart';
 import '../../../setup/data/datasources/setup_local_data_source.dart';
 import '../../../setup/data/repositories/setup_repository.dart';
 import '../../../setup/data/repositories/setup_repository_impl.dart';
@@ -16,14 +18,15 @@ abstract class DashboardDataGateway {
   });
 }
 
-class _SetupRepositoryGateway implements DashboardDataGateway {
-  const _SetupRepositoryGateway(this._repository);
+class _Gateway implements DashboardDataGateway {
+  const _Gateway(this._setupRepository, this._expenseDataSource);
 
-  final SetupRepository _repository;
+  final SetupRepository _setupRepository;
+  final ExpenseLocalDataSource _expenseDataSource;
 
   @override
   Future<DashboardBudgetProfileData?> getBudgetProfile() async {
-    final profile = await _repository.getBudgetProfile();
+    final profile = await _setupRepository.getBudgetProfile();
     if (profile == null) return null;
 
     return DashboardBudgetProfileData(
@@ -40,7 +43,7 @@ class _SetupRepositoryGateway implements DashboardDataGateway {
   Future<List<DashboardCategoryData>> getCategoriesForProfile(
     String profileId,
   ) async {
-    final categories = await _repository.getBudgetCategories();
+    final categories = await _setupRepository.getBudgetCategories();
 
     return categories
         .map(
@@ -60,7 +63,18 @@ class _SetupRepositoryGateway implements DashboardDataGateway {
   Future<List<DashboardExpenseData>> getExpensesForMonth({
     required DateTime month,
   }) async {
-    return [];
+    final expenses = await _expenseDataSource.getExpensesForMonth(month);
+
+    return expenses
+        .map(
+          (e) => DashboardExpenseData(
+            id: e.id?.toString() ?? '',
+            budgetCategoryId: e.budgetCategoryId.toString(),
+            amount: e.amount,
+            expenseDate: e.expenseDate,
+          ),
+        )
+        .toList();
   }
 }
 
@@ -68,6 +82,8 @@ final dashboardDataGatewayProvider = Provider<DashboardDataGateway>((ref) {
   final localDataSource = SetupLocalDataSource(
     appDatabase: ref.watch(appDatabaseProvider),
   );
-  final repository = SetupRepositoryImpl(localDataSource: localDataSource);
-  return _SetupRepositoryGateway(repository);
+  final setupRepository = SetupRepositoryImpl(localDataSource: localDataSource);
+  final expenseDataSource = ref.watch(expenseLocalDataSourceProvider);
+
+  return _Gateway(setupRepository, expenseDataSource);
 });

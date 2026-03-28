@@ -16,7 +16,7 @@ class DashboardHeader extends StatelessWidget {
           radius: 22,
           backgroundColor: Color(0xFFBFE7E3),
           child: Text(
-            'K',
+            'P',
             style: TextStyle(
               color: Color(0xFF006763),
               fontWeight: FontWeight.w700,
