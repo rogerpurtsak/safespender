@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_radius.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
 import 'providers/setup_notifier.dart';
+import 'providers/setup_state.dart';
 
 class SetupScreen extends StatelessWidget {
   const SetupScreen({super.key});
@@ -121,6 +123,10 @@ class _SetupFormCardState extends ConsumerState<_SetupFormCard> {
     incomeController.text = state.monthlyIncomeInput;
     fixedExpensesController.text = state.monthlyFixedExpensesInput;
     bufferController.text = state.safetyBufferInput;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(setupNotifierProvider.notifier).loadSavedSetupIfExists();
+    });
   }
 
   @override
@@ -136,6 +142,12 @@ class _SetupFormCardState extends ConsumerState<_SetupFormCard> {
   Widget build(BuildContext context) {
     final state = ref.watch(setupNotifierProvider);
     final notifier = ref.read(setupNotifierProvider.notifier);
+
+    ref.listen<SetupState>(setupNotifierProvider, (_, next) {
+      if (next.hasCompletedSetup && mounted) {
+        context.go('/');
+      }
+    });
 
     final distributableAmount = notifier.distributableAmount;
     final totalAllocatedPercent = notifier.totalAllocatedPercent;
@@ -449,7 +461,10 @@ class _SetupFormCardState extends ConsumerState<_SetupFormCard> {
             onPressed: state.isSaving
                 ? null
                 : () async {
-                    await notifier.saveSetup();
+                    final success = await notifier.saveSetup();
+                    if (success && context.mounted) {
+                      context.go('/');
+                    }
                   },
               style: FilledButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 11, 99, 93),
