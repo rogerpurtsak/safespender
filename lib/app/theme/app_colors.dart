@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Brand / primary
-  static const primary = Color(0xFF0E8C83);
+  static const primary = Color.fromARGB(255, 11, 99, 93);
   static const primaryDark = Color(0xFF0A6E67);
   static const primarySoft = Color(0xFFDFF5F2);
 
   // Backgrounds / surfaces
   static const background = Color(0xF8F9FFFF);
-  static const surface = Color(0xFFFFFFFF);
-  static const surfaceSoft = Color(0xFFF1F4F8);
+  static const surface = Color.fromARGB(255, 255, 255, 255);
+  static const surfaceSoft = Color.fromARGB(255, 255, 255, 255);
 
   // Text
   static const textPrimary = Color(0xFF0A2342);
@@ -17,7 +17,7 @@ class AppColors {
   static const textMuted = Color(0xFFA7B1BF);
 
   // Borders / dividers
-  static const border = Color(0xFFE6EBF2);
+  static const border = Color.fromARGB(255, 235, 238, 243);
   static const divider = Color(0xFFDCE3EC);
 
   // Status
@@ -40,7 +40,7 @@ class AppColors {
   static const navUnselected = Color(0xFF98A3B3);
 
   // Inputs
-  static const inputFill = Color(0xFFF8FAFC);
+  static const inputFill = Color.fromARGB(255, 238, 243, 248);
   static const inputBorder = Color(0xFFE7EDF3);
 
   // Cards / highlights

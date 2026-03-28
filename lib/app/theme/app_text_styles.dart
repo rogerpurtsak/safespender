@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTextStyles {
   static const display = TextStyle(
@@ -43,5 +44,21 @@ class AppTextStyles {
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: Colors.white,
+  );
+
+  final TextStyle brand = GoogleFonts.inter(
+    fontSize: 20,
+    fontWeight: FontWeight.w800,
+    color: AppColors.primary,
+    height: 1.05,
+    letterSpacing: -1.0,
+  );
+
+  final TextStyle introHeader = GoogleFonts.inter(
+    fontSize: 40,
+    fontWeight: FontWeight.w800,
+    color: Colors.black,
+    height: 1.05,
+    letterSpacing: -1.0,
   );
 }
