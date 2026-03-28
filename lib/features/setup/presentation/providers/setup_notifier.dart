@@ -8,6 +8,7 @@ import '../../domain/models/budget_category.dart';
 import '../../domain/models/budget_profile.dart';
 import '../../domain/services/setup_budget_calculator.dart';
 import 'setup_state.dart';
+import 'package:flutter/foundation.dart';
 
 final setupBudgetCalculatorProvider = Provider<SetupBudgetCalculator>(
   (ref) => const SetupBudgetCalculator(),
@@ -384,10 +385,13 @@ class SetupNotifier extends Notifier<SetupState> {
       );
 
       return true;
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('SAVE SETUP ERROR: $e');
+      debugPrintStack(stackTrace: st);
+
       state = state.copyWith(
         isSaving: false,
-        errorMessage: 'Setup salvestamine ebaõnnestus.',
+        errorMessage: 'Setup salvestamine ebaõnnestus: $e',
       );
       return false;
     }

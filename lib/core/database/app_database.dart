@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -23,10 +25,16 @@ class AppDatabase {
 
   Future<Database> _initDatabase() async {
     final directory = await getApplicationDocumentsDirectory();
-    final path = p.join(directory.path, _databaseName);
+    final dbDirectory = Directory(p.join(directory.path, 'databases'));
+
+    if (!await dbDirectory.exists()) {
+      await dbDirectory.create(recursive: true);
+    }
+
+    final dbPath = p.join(dbDirectory.path, _databaseName);
 
     return openDatabase(
-      path,
+      dbPath,
       version: _databaseVersion,
       onCreate: _onCreate,
     );
