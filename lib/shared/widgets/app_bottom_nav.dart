@@ -31,9 +31,9 @@ class AppBottomNav extends StatelessWidget {
               label: 'Lisa kulu',
             ),
             NavigationDestination(
-              icon: Icon(Icons.shopping_basket_outlined),
-              selectedIcon: Icon(Icons.shopping_basket),
-              label: 'Toit',
+              icon: Icon(Icons.category_outlined),
+              selectedIcon: Icon(Icons.category),
+              label: 'Kategooriad',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),

@@ -16,4 +16,12 @@ class ExpenseRepositoryImpl implements ExpenseRepository {
   Future<List<Expense>> getExpensesForMonth(DateTime month) {
     return localDataSource.getExpensesForMonth(month);
   }
+
+  @override
+  Future<List<Expense>> getExpensesForCategoryInMonth(
+    int categoryId,
+    DateTime month,
+  ) {
+    return localDataSource.getExpensesForCategoryInMonth(categoryId, month);
+  }
 }
