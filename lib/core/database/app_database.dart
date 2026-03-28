@@ -10,7 +10,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _databaseName = 'bigbank_budget.db';
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2;
 
   Database? _database;
 
@@ -37,6 +37,7 @@ class AppDatabase {
       dbPath,
       version: _databaseVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -66,6 +67,28 @@ class AppDatabase {
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (budget_profile_id) REFERENCES budget_profiles (id)
+      )
+    ''');
+
+    await _createExpensesTable(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await _createExpensesTable(db);
+    }
+  }
+
+  Future<void> _createExpensesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        budget_category_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        expense_date TEXT NOT NULL,
+        note TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (budget_category_id) REFERENCES budget_categories (id)
       )
     ''');
   }
