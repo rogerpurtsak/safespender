@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../shared/widgets/app_state_screen.dart';
 import '../../../features/setup/domain/models/budget_category.dart';
 import 'providers/settings_notifier.dart';
 import 'providers/settings_state.dart';
@@ -83,45 +85,44 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ),
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                    children: [
-                      if (!state.hasProfile) ...[
-                        _NoProfileBanner(),
-                        const SizedBox(height: 24),
-                      ],
-                      if (state.hasProfile) ...[
-                        _sectionLabel('Eelarve seaded'),
-                        const SizedBox(height: 12),
-                        _BudgetSettingsCard(
-                            state: state, notifier: notifier),
-                        const SizedBox(height: 24),
-                        _CategorySectionHeader(state: state),
-                        const SizedBox(height: 12),
-                        _CategoryListCard(
-                            state: state, notifier: notifier),
-                        const SizedBox(height: 8),
-                        _AddCategoryButton(notifier: notifier),
-                        const SizedBox(height: 24),
-                      ],
-                      _sectionLabel('Eelistused'),
-                      const SizedBox(height: 12),
-                      _NotificationsCard(
-                          state: state, notifier: notifier),
-                      const SizedBox(height: 24),
-                      _DataSecurityCard(),
-                      const SizedBox(height: 8),
-                    ],
-                  ),
+          ? AppStateScreen.loading()
+          : !state.hasProfile
+              ? AppStateScreen.setupRequired(
+                  onSetup: () => context.go('/setup'),
+                  body:
+                      'Seadete kasutamiseks sisesta esmalt eelarve alus — sissetulek, püsikulud ja kategooriad.',
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                        children: [
+                          _sectionLabel('Eelarve seaded'),
+                          const SizedBox(height: 12),
+                          _BudgetSettingsCard(
+                              state: state, notifier: notifier),
+                          const SizedBox(height: 24),
+                          _CategorySectionHeader(state: state),
+                          const SizedBox(height: 12),
+                          _CategoryListCard(
+                              state: state, notifier: notifier),
+                          const SizedBox(height: 8),
+                          _AddCategoryButton(notifier: notifier),
+                          const SizedBox(height: 24),
+                          _sectionLabel('Eelistused'),
+                          const SizedBox(height: 12),
+                          _NotificationsCard(
+                              state: state, notifier: notifier),
+                          const SizedBox(height: 24),
+                          _DataSecurityCard(),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                    _SaveButton(state: state, notifier: notifier),
+                  ],
                 ),
-                if (state.hasProfile)
-                  _SaveButton(state: state, notifier: notifier),
-              ],
-            ),
     );
   }
 
@@ -141,7 +142,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-// ── Eelarve seaded card ────────────────────────────────────────────────────────
 
 class _BudgetSettingsCard extends StatelessWidget {
   final SettingsState state;
@@ -242,7 +242,6 @@ class _BudgetSettingsCard extends StatelessWidget {
   }
 }
 
-// ── Category section header ────────────────────────────────────────────────────
 
 class _CategorySectionHeader extends StatelessWidget {
   final SettingsState state;
@@ -292,7 +291,6 @@ class _CategorySectionHeader extends StatelessWidget {
   }
 }
 
-// ── Category list card ────────────────────────────────────────────────────────
 
 class _CategoryListCard extends StatelessWidget {
   final SettingsState state;
@@ -316,7 +314,6 @@ class _CategoryListCard extends StatelessWidget {
       ]);
     }
 
-    // Build color opacities for segmented bar
     final opacities = [1.0, 0.65, 0.45, 0.28, 0.15];
 
     return _Card(
@@ -353,7 +350,6 @@ class _CategoryListCard extends StatelessWidget {
     final nameCtrl = TextEditingController(text: category.name);
     double localPercent = category.allocationPercent;
 
-    // Max = current + unallocated
     final maxPercent =
         category.allocationPercent + state.unallocatedPercent;
 
@@ -610,7 +606,6 @@ class _AllocationBar extends StatelessWidget {
   }
 }
 
-// ── Add category button ────────────────────────────────────────────────────────
 
 class _AddCategoryButton extends StatelessWidget {
   final SettingsNotifier notifier;
@@ -707,7 +702,6 @@ class _AddCategoryButton extends StatelessWidget {
   }
 }
 
-// ── Notifications card ────────────────────────────────────────────────────────
 
 class _NotificationsCard extends StatelessWidget {
   final SettingsState state;
@@ -765,7 +759,6 @@ class _NotificationsCard extends StatelessWidget {
   }
 }
 
-// ── Data security card ────────────────────────────────────────────────────────
 
 class _DataSecurityCard extends StatelessWidget {
   @override
@@ -828,40 +821,6 @@ class _DataSecurityCard extends StatelessWidget {
   }
 }
 
-// ── No profile banner ─────────────────────────────────────────────────────────
-
-class _NoProfileBanner extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.warningBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: AppColors.warning.withValues(alpha: 0.3)),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.info_outline, color: AppColors.warning, size: 20),
-          SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Eelarve profiil puudub. Seadistage rakendus esmalt.',
-              style: TextStyle(
-                color: AppColors.warning,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Save button (pinned above nav) ────────────────────────────────────────────
 
 class _SaveButton extends StatelessWidget {
   final SettingsState state;
@@ -908,7 +867,6 @@ class _SaveButton extends StatelessWidget {
   }
 }
 
-// ── Shared primitives ─────────────────────────────────────────────────────────
 
 class _Card extends StatelessWidget {
   final List<Widget> children;

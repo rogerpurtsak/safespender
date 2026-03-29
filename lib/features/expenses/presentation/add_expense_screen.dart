@@ -105,22 +105,20 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                   loading: () => const LinearProgressIndicator(
                     color: AppColors.primary,
                   ),
-                  error: (e, s) => const Text(
-                    'Kategooriate laadimine ebaõnnestus.',
-                    style: TextStyle(color: AppColors.error),
+                  error: (e, s) => _InlineNotice(
+                    icon: Icons.error_outline,
+                    message: 'Kategooriate laadimine ebaõnnestus.',
+                    color: AppColors.error,
+                    background: AppColors.errorBg,
                   ),
                   data: (categories) {
                     if (categories.isEmpty) {
-                      return Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: AppColors.inputFill,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'Kategooriaid pole. Tee esmalt seadistus.',
-                          style: TextStyle(color: AppColors.textSecondary),
-                        ),
+                      return _InlineNotice(
+                        icon: Icons.tune_outlined,
+                        message:
+                            'Kategooriaid pole. Lisa need esmalt seadistuses.',
+                        color: AppColors.textSecondary,
+                        background: AppColors.inputFill,
                       );
                     }
                     return Wrap(
@@ -495,6 +493,47 @@ class _ReceiptSuggestionCard extends StatelessWidget {
             Icons.add_a_photo_outlined,
             color: AppColors.textMuted,
             size: 22,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InlineNotice extends StatelessWidget {
+  const _InlineNotice({
+    required this.icon,
+    required this.message,
+    required this.color,
+    required this.background,
+  });
+
+  final IconData icon;
+  final String message;
+  final Color color;
+  final Color background;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: color,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
