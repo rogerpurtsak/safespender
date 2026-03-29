@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_spacing.dart';
+import '../../../shared/widgets/app_state_screen.dart';
 import '../domain/models/category_budget_overview.dart';
 import '../domain/models/category_budget_status.dart';
 import 'providers/grocery_overview_provider.dart';
@@ -18,14 +19,25 @@ class GroceryOverviewScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: overviewAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => _ErrorState(message: e.toString()),
+          loading: () => AppStateScreen.loading(),
+          error: (e, _) => AppStateScreen.error(
+            onRetry: () => ref.invalidate(categoryBudgetOverviewProvider),
+          ),
           data: (state) {
             if (!state.isConfigured) {
-              return const _NotConfiguredState();
+              return AppStateScreen.setupRequired(
+                onSetup: () => context.go('/setup'),
+                body:
+                    'Eelarve ülevaate nägemiseks sisesta esmalt kuine eelarve alus.',
+              );
             }
             if (!state.hasCategories) {
-              return const _NoCategoriesState();
+              return AppStateScreen.setupRequired(
+                onSetup: () => context.go('/setup'),
+                title: 'Kategooriaid pole',
+                body:
+                    'Lisa seadistuses kulukategooriad, et siin ülevaadet näha.',
+              );
             }
             return _OverviewBody(state: state);
           },
@@ -444,97 +456,6 @@ class _StatusBadge extends StatelessWidget {
 }
 
 
-class _NotConfiguredState extends StatelessWidget {
-  const _NotConfiguredState();
-
-  @override
-  Widget build(BuildContext context) {
-    return _EmptyLayout(
-      icon: Icons.tune_outlined,
-      title: 'Seadistus puudub',
-      message: 'Eelarve ülevaate nägemiseks lõpeta esmalt esialgne seadistamine.',
-    );
-  }
-}
-
-class _NoCategoriesState extends StatelessWidget {
-  const _NoCategoriesState();
-
-  @override
-  Widget build(BuildContext context) {
-    return _EmptyLayout(
-      icon: Icons.category_outlined,
-      title: 'Kategooriaid pole',
-      message: 'Lisa seadistuses kulukategooriad, et siin ülevaadet näha.',
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return _EmptyLayout(
-      icon: Icons.error_outline,
-      title: 'Midagi läks valesti',
-      message: message,
-    );
-  }
-}
-
-class _EmptyLayout extends StatelessWidget {
-  const _EmptyLayout({
-    required this.icon,
-    required this.title,
-    required this.message,
-  });
-
-  final IconData icon;
-  final String title;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.inputFill,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 36, color: AppColors.textSecondary),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 
 String _fmt(double amount) =>

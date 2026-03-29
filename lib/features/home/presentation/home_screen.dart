@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../shared/widgets/app_state_screen.dart';
 import 'providers/home_summary_provider.dart';
+import 'providers/remote_insight_provider.dart';
 import 'widgets/dashboard_currency.dart';
 import 'widgets/dashboard_header.dart';
 import 'widgets/home_categories_section.dart';
-import 'widgets/home_empty_state.dart';
 import 'widgets/home_insight_card.dart';
 import 'widgets/home_primary_summary_card.dart';
 import 'widgets/home_stat_card.dart';
-import 'providers/remote_insight_provider.dart';
 import 'widgets/remote_insight_card.dart';
 
 
@@ -24,11 +24,17 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: summaryAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Viga: $e')),
+          loading: () => AppStateScreen.loading(),
+          error: (e, _) => AppStateScreen.error(
+            onRetry: () => ref.invalidate(homeSummaryProvider),
+          ),
           data: (summaryState) {
             if (!summaryState.isConfigured || summaryState.summary == null) {
-              return HomeEmptyState(onOpenSetup: () => context.go('/setup'));
+              return AppStateScreen.setupRequired(
+                onSetup: () => context.go('/setup'),
+                body:
+                    'Sisesta sissetulek, püsikulud ja kategooriad, et avaleht saaks sinu kuu ülevaate arvutada.',
+              );
             }
 
             final summary = summaryState.summary!;
@@ -99,7 +105,7 @@ class HomeScreen extends ConsumerWidget {
                         const SizedBox(height: 12),
                         ref.watch(remoteInsightProvider).when(
                           loading: () => HomeInsightCard(insight: summary.insight),
-                          error: (e, _) => Text('REMOTE VIGA: $e'),
+                          error: (e, st) => HomeInsightCard(insight: summary.insight),
                           data: (remote) => remote != null
                               ? RemoteInsightCard(insight: remote)
                               : HomeInsightCard(insight: summary.insight),
