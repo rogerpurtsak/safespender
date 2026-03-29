@@ -1,3 +1,6 @@
+// ignore: avoid_print
+import 'dart:developer' as dev;
+
 import '../entities/category_summary.dart';
 import '../entities/dashboard_source_models.dart';
 import '../entities/home_insight.dart';
@@ -14,6 +17,7 @@ class HomeSummaryCalculator {
     final spentByCategory = <String, double>{};
 
     for (final expense in expenses) {
+      dev.log('EXPENSE: id=${expense.id} categoryId="${expense.budgetCategoryId}" amount=${expense.amount}');
       spentByCategory.update(
         expense.budgetCategoryId,
         (value) => value + expense.amount,
@@ -21,10 +25,13 @@ class HomeSummaryCalculator {
       );
     }
 
+    dev.log('spentByCategory keys: ${spentByCategory.keys.toList()}');
+
     final categorySummaries = categories
         .map(
           (category) {
             final spentAmount = spentByCategory[category.id] ?? 0;
+            dev.log('CATEGORY: id="${category.id}" name="${category.name}" spent=$spentAmount');
             final plannedAmount = category.plannedAmount;
             final remainingAmount = plannedAmount - spentAmount;
             final usagePercent = plannedAmount <= 0

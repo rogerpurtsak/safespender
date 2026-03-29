@@ -35,7 +35,6 @@ class GroceryOverviewScreen extends ConsumerWidget {
   }
 }
 
-// ── Main content ─────────────────────────────────────────────────────────────
 
 class _OverviewBody extends ConsumerWidget {
   const _OverviewBody({required this.state});
@@ -69,7 +68,6 @@ class _OverviewBody extends ConsumerWidget {
   }
 }
 
-// ── Screen header ─────────────────────────────────────────────────────────────
 
 class _ScreenHeader extends StatelessWidget {
   const _ScreenHeader({required this.monthLabel});
@@ -100,7 +98,6 @@ class _ScreenHeader extends StatelessWidget {
   }
 }
 
-// ── Month summary row (totals across all categories) ─────────────────────────
 
 class _MonthSummaryRow extends StatelessWidget {
   const _MonthSummaryRow({required this.overviews});
@@ -214,7 +211,6 @@ class _Divider extends StatelessWidget {
   }
 }
 
-// ── Category card ─────────────────────────────────────────────────────────────
 
 class _CategoryCard extends StatelessWidget {
   const _CategoryCard({required this.overview});
@@ -236,7 +232,6 @@ class _CategoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header row ──────────────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -252,7 +247,6 @@ class _CategoryCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // ── Amounts row ──────────────────────────────────────────────────
           Row(
             children: [
               Expanded(
@@ -286,7 +280,6 @@ class _CategoryCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // ── Progress bar ─────────────────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
@@ -297,14 +290,12 @@ class _CategoryCard extends StatelessWidget {
             ),
           ),
 
-          // ── Daily suggestion ─────────────────────────────────────────────
           if (overview.suggestedDailyAmount != null &&
               overview.remainingDays > 0) ...[
             const SizedBox(height: 12),
             _DailySuggestionLine(overview: overview),
           ],
 
-          // ── Overspent note ───────────────────────────────────────────────
           if (overview.isOverBudget) ...[
             const SizedBox(height: 12),
             _OverspentLine(amount: overview.overspentAmount),
@@ -405,7 +396,6 @@ class _OverspentLine extends StatelessWidget {
   }
 }
 
-// ── Status badge ──────────────────────────────────────────────────────────────
 
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status, required this.colors});
@@ -453,7 +443,6 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-// ── Empty / error states ──────────────────────────────────────────────────────
 
 class _NotConfiguredState extends StatelessWidget {
   const _NotConfiguredState();
@@ -547,9 +536,7 @@ class _EmptyLayout extends StatelessWidget {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
-/// Formats a non-negative amount as "X,XX €".
 String _fmt(double amount) =>
     '${amount.abs().toStringAsFixed(2).replaceAll('.', ',')} €';
 
