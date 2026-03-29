@@ -40,6 +40,11 @@ class AppBottomNav extends StatelessWidget {
               selectedIcon: Icon(Icons.settings),
               label: 'Seaded',
             ),
+            NavigationDestination(
+              icon: Icon(Icons.price_check_outlined),
+              selectedIcon: Icon(Icons.price_check),
+              label: 'Hinda ostu',
+            ),
           ],
         ),
       );
