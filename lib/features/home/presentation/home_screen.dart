@@ -5,11 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'providers/home_summary_provider.dart';
 import 'widgets/dashboard_currency.dart';
 import 'widgets/dashboard_header.dart';
-import 'widgets/home_category_highlight_card.dart';
+import 'widgets/home_categories_section.dart';
 import 'widgets/home_empty_state.dart';
 import 'widgets/home_insight_card.dart';
 import 'widgets/home_primary_summary_card.dart';
 import 'widgets/home_stat_card.dart';
+import 'providers/remote_insight_provider.dart';
+import 'widgets/remote_insight_card.dart';
+
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -87,14 +90,20 @@ class HomeScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        if (summary.highlightedCategory != null) ...[
+                        if (summary.categorySummaries.isNotEmpty) ...[
                           const SizedBox(height: 12),
-                          HomeCategoryHighlightCard(
-                            category: summary.highlightedCategory!,
+                          HomeCategoriesSection(
+                            categories: summary.categorySummaries,
                           ),
                         ],
                         const SizedBox(height: 12),
-                        HomeInsightCard(insight: summary.insight),
+                        ref.watch(remoteInsightProvider).when(
+                          loading: () => HomeInsightCard(insight: summary.insight),
+                          error: (e, _) => Text('REMOTE VIGA: $e'),
+                          data: (remote) => remote != null
+                              ? RemoteInsightCard(insight: remote)
+                              : HomeInsightCard(insight: summary.insight),
+                        ),
                       ],
                     ),
                   ),
