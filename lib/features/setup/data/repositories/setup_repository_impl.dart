@@ -40,4 +40,22 @@ class SetupRepositoryImpl implements SetupRepository {
   Future<void> clearSetup() {
     return localDataSource.clearSetup();
   }
+
+  @override
+  Future<void> updateBudgetProfile(BudgetProfile profile) {
+    return localDataSource.updateBudgetProfile(profile);
+  }
+
+  @override
+  Future<void> syncCategories({
+    required int profileId,
+    required double distributableAmount,
+    required List<BudgetCategory> categories,
+  }) {
+    return localDataSource.syncCategories(
+      profileId: profileId,
+      distributableAmount: distributableAmount,
+      categories: categories,
+    );
+  }
 }

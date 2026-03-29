@@ -10,7 +10,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _databaseName = 'bigbank_budget.db';
-  static const _databaseVersion = 2;
+  static const _databaseVersion = 3;
 
   Database? _database;
 
@@ -71,12 +71,25 @@ class AppDatabase {
     ''');
 
     await _createExpensesTable(db);
+    await _createAppPreferencesTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createExpensesTable(db);
     }
+    if (oldVersion < 3) {
+      await _createAppPreferencesTable(db);
+    }
+  }
+
+  Future<void> _createAppPreferencesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS app_preferences (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    ''');
   }
 
   Future<void> _createExpensesTable(Database db) async {
