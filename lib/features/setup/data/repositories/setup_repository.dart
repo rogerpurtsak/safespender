@@ -14,4 +14,12 @@ abstract class SetupRepository {
   Future<bool> hasCompletedSetup();
 
   Future<void> clearSetup();
+
+  Future<void> updateBudgetProfile(BudgetProfile profile);
+
+  Future<void> syncCategories({
+    required int profileId,
+    required double distributableAmount,
+    required List<BudgetCategory> categories,
+  });
 }
