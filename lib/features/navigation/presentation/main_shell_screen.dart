@@ -3,6 +3,7 @@ import 'package:safespender/features/grocery/presentation/grocery_overview_scree
 import '../../../shared/widgets/app_bottom_nav.dart';
 import '../../home/presentation/home_screen.dart';
 import '../../expenses/presentation/add_expense_screen.dart';
+import '../../purchase_check/presentation/purchase_check_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 
 class MainShellScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     AddExpenseScreen(),
     GroceryOverviewScreen(),
     SettingsScreen(),
+    PurchaseCheckScreen(),
   ];
 
   @override
